@@ -3,9 +3,10 @@
 #include "Conta.hpp"
 
 
-// destructor
+// // destructor
 Conta::~Conta() {
     numeroDeContas--;
+    std::cout << "Destrutor da conta" << std::endl;
 }
 
 
@@ -15,6 +16,7 @@ Conta::Conta(std::string numero, Titular titular):
     titular(titular), 
     saldo(0) {
 
+    std::cout << "Conta criada com sucesso" << std::endl;
     numeroDeContas++;
 }
 
@@ -31,18 +33,25 @@ int Conta::obterNumeroDeContas() {
     return numeroDeContas;
 }
 
+
 void Conta::sacar(float valor) {
 
     if (valor <= 0) {
         std::cout << "Valor de saque inválido!" << std::endl;
         return;
-    } else if (valor > saldo) {
+    }
+
+    float taxa = this->taxaDeSaque();
+    float tarifaDoSaque = valor * taxa;
+    float valorDoSaque = valor + tarifaDoSaque;
+
+    if (valorDoSaque > saldo) {
         std::cout << "Saldo insuficiente!" << std::endl;
         return;
     } 
     
-    saldo -= valor;
-    std::cout << "Saque realizado com sucesso!" << std::endl;
+    saldo -= valorDoSaque;
+    std::cout << "Saque de " << valorDoSaque << " e taxa de " << taxa * 100 << "% realizado com sucesso!" << std::endl;
     
 }
 
@@ -54,7 +63,7 @@ void Conta::depositar(float valor) {
     }
 
     saldo += valor;
-    std::cout << "Depósito realizado com sucesso!" << std::endl;
+    std::cout << "Depósito de "<< valor << " realizado com sucesso!" << std::endl;
 }
 
 float Conta::obterSaldo() const { 
