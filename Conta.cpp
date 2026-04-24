@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <variant>
 #include "Conta.hpp"
 
 
@@ -34,11 +35,10 @@ int Conta::obterNumeroDeContas() {
 }
 
 
-void Conta::sacar(float valor) {
+std::variant<Conta::ResultadoErroSaque, float> Conta::sacar(float valor) {
 
     if (valor <= 0) {
-        std::cout << "Valor de saque inválido!" << std::endl;
-        return;
+        return VALOR_INVALIDO;
     }
 
     float taxa = this->taxaDeSaque();
@@ -46,13 +46,12 @@ void Conta::sacar(float valor) {
     float valorDoSaque = valor + tarifaDoSaque;
 
     if (valorDoSaque > saldo) {
-        std::cout << "Saldo insuficiente!" << std::endl;
-        return;
+        return SALDO_INSUFICIENTE;
     } 
     
     saldo -= valorDoSaque;
-    std::cout << "Saque de " << valorDoSaque << " e taxa de " << taxa * 100 << "% realizado com sucesso!" << std::endl;
-    
+    return valorDoSaque;
+
 }
 
 void Conta::depositar(float valor) {
@@ -66,12 +65,24 @@ void Conta::depositar(float valor) {
     std::cout << "Depósito de "<< valor << " realizado com sucesso!" << std::endl;
 }
 
+void Conta::operator+=(float valor) {
+    this->depositar(valor);
+}
+
+std::variant<Conta::ResultadoErroSaque, float> Conta::operator-=(float valor) {
+    return this->sacar(valor);
+}
+
 float Conta::obterSaldo() const { 
     return saldo; 
 }
 
 std::string Conta::obterNumero() {
-
     return this->numero;
+}
+
+bool Conta::operator<(const Conta& outra) {
+
+    return this->saldo < outra.saldo;
 
 }

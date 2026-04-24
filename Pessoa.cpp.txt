@@ -1,7 +1,6 @@
 #include <string>
 #include <iostream>
 #include "Pessoa.hpp"
-#include "CPF.hpp"
 
 
 // destructor
@@ -10,8 +9,8 @@ Pessoa::~Pessoa() {
 }
 
 // usando initialization list - isso evita um processo de inicialização das propriedades não primitivas
-Pessoa::Pessoa(CPF cpf, std::string nome): 
-    cpf(cpf), 
+Pessoa::Pessoa(Documento documento, std::string nome): 
+    documento(documento), 
     nome(nome) {
 
     std::cout << "O construtor de Pessoa foi executado" << std::endl;
@@ -19,8 +18,8 @@ Pessoa::Pessoa(CPF cpf, std::string nome):
     verificarTamanhoNome();
 }
 
-CPF Pessoa::obterCpf(){
-    return cpf;
+Documento Pessoa::obterDocumento(){
+    return documento;
 }
 
 std::string Pessoa::obterNome(){

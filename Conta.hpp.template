@@ -1,0 +1,107 @@
+#pragma once
+#include <string>
+#include <utility>
+#include <variant>
+#include "Titular.hpp"
+
+template<int percentualTaxaDeSaque>
+class Conta {
+
+private:
+    std::string numero;
+    Titular titular;
+
+protected:
+    float saldo;
+
+private:
+    static int numeroDeContas = 0;
+
+public:
+    static int obterNumeroDeContas() {
+        return numeroDeContas;
+    }
+
+public:
+
+    enum ResultadoErroSaque { SALDO_INSUFICIENTE, VALOR_INVALIDO };
+
+    // usando initialization list - isso evita um processo de inicialização das propriedades não primitivas
+    Conta(std::string numero, Titular titular) { // construtor customizado
+        numero(numero), 
+        titular(titular), 
+        saldo(0) {
+
+        std::cout << "Conta criada com sucesso" << std::endl;
+        numeroDeContas++;
+    }
+
+    // usando construtor na forma mais comum
+    // Conta(std::string numero, Titular titular) {
+    //     this->numero = numero;
+    //     this->titular = titular;
+    //     this->saldo = 0;
+    // }
+
+    Conta() = delete; // construtor padrão removido
+    
+    virtual ~Conta() { // destructor
+        numeroDeContas--;
+        std::cout << "Destrutor da conta" << std::endl;
+    }
+    
+    std::string obterNumero() {
+        return this->numero;
+    }
+
+    float obterSaldo() const {
+        return saldo; 
+    }
+    
+    std::variant<ResultadoErroSaque, float> sacar(float valor) {
+
+        if (valor <= 0) {
+            return VALOR_INVALIDO;
+        }
+
+        float taxa = percentualTaxaDeSaque / 100.0f;
+        float tarifaDoSaque = valor * taxa;
+        float valorDoSaque = valor + tarifaDoSaque;
+
+        if (valorDoSaque > saldo) {
+            return SALDO_INSUFICIENTE;
+        } 
+        
+        saldo -= valorDoSaque;
+        return valorDoSaque;
+        
+    }
+    
+    void depositar(float valor) {
+        if (valor <= 0) {
+            std::cout << "Valor de depósito inválido!" << std::endl;
+            return;
+        }
+
+        saldo += valor;
+        std::cout << "Depósito de "<< valor << " realizado com sucesso!" << std::endl;
+
+    }
+
+    void operator+=(float valor) { // operator overloaded para o operador += que ira depositar um valor na conta
+        this->depositar(valor);
+    }
+
+    std::variant<ResultadoErroSaque, float> operator-=(float valor) { // operator overloaded para o operador -= que ira sacar um valor da conta
+        return this->sacar(valor);
+    }
+
+    bool operator<(const Conta& outra) {
+        return this->saldo < outra.saldo;
+    }
+    
+    virtual float taxaDeSaque() const = 0; // método puramente virtual - isso obriga que todas as classes que herdem de Conta tenha que implementar esse método
+    
+    //friend std::ostream& operator<<(std::ostream& cout, Conta& conta)  // friend function + operator overloaded para o operador << que ira exibir as informações da conta
+
+};

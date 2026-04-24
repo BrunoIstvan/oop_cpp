@@ -1,0 +1,18 @@
+#include <string>
+#include <iostream>
+#include "Conta.hpp"
+#include "ContaPoupanca.hpp"
+
+
+// usando initialization list - isso evita um processo de inicialização das propriedades não primitivas
+ContaPoupanca::ContaPoupanca(std::string numero, Titular titular): Conta(numero, titular) {
+
+    std::cout << "ContaPoupanca criada com sucesso - Número: " << this->obterNumero() << std::endl;
+
+}
+
+// destructor
+ContaPoupanca::~ContaPoupanca() {
+    std::cout << "Destrutor da conta poupança" << std::endl;
+}
+

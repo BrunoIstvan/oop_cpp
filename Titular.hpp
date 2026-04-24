@@ -8,7 +8,7 @@
 #include "Autenticavel.hpp"
 
 
-class Titular : public Pessoa, public Autenticavel {
+class Titular : public Pessoa<CPF>, public Autenticavel {
 
 public:
     Titular() = delete; // construtor padrão removido
